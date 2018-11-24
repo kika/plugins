@@ -17,6 +17,7 @@ const String kMockEmail = 'test@example.com';
 const String kMockPassword = 'passw0rd';
 const String kMockIdToken = '12345';
 const String kMockAccessToken = '67890';
+const String kMockGithubToken = 'github';
 const String kMockAuthToken = '23456';
 const String kMockAuthTokenSecret = '78901';
 const String kMockCustomToken = '12345';
@@ -51,7 +52,7 @@ void main() {
           case "updateProfile":
             return null;
             break;
-          case "fetchProvidersForEmail":
+          case "fetchSignInMethodsForEmail":
             return List<String>(0);
             break;
           case "verifyPhoneNumber":
@@ -134,16 +135,16 @@ void main() {
       );
     });
 
-    test('fetchProvidersForEmail', () async {
+    test('fetchSignInMethodsForEmail', () async {
       final List<String> providers =
-          await auth.fetchProvidersForEmail(email: kMockEmail);
+          await auth.fetchSignInMethodsForEmail(email: kMockEmail);
       expect(providers, isNotNull);
       expect(providers.length, 0);
       expect(
         log,
         <Matcher>[
           isMethodCall(
-            'fetchProvidersForEmail',
+            'fetchSignInMethodsForEmail',
             arguments: <String, String>{
               'email': kMockEmail,
               'app': auth.app.name
@@ -162,6 +163,84 @@ void main() {
           'smsCode': kMockSmsCode,
         })
       ]);
+    test('linkWithTwitterCredential', () async {
+      final FirebaseUser user = await auth.linkWithTwitterCredential(
+        authToken: kMockIdToken,
+        authTokenSecret: kMockAccessToken,
+      );
+      verifyUser(user);
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'linkWithTwitterCredential',
+            arguments: <String, String>{
+              'authToken': kMockIdToken,
+              'authTokenSecret': kMockAccessToken,
+              'app': auth.app.name,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('signInWithTwitter', () async {
+      final FirebaseUser user = await auth.signInWithTwitter(
+        authToken: kMockIdToken,
+        authTokenSecret: kMockAccessToken,
+      );
+      verifyUser(user);
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'signInWithTwitter',
+            arguments: <String, String>{
+              'authToken': kMockIdToken,
+              'authTokenSecret': kMockAccessToken,
+              'app': auth.app.name,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('linkWithGithubCredential', () async {
+      final FirebaseUser user = await auth.linkWithGithubCredential(
+        token: kMockGithubToken,
+      );
+      verifyUser(user);
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'linkWithGithubCredential',
+            arguments: <String, String>{
+              'token': kMockGithubToken,
+              'app': auth.app.name,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('signInWithGithub', () async {
+      final FirebaseUser user = await auth.signInWithGithub(
+        token: kMockGithubToken,
+      );
+      verifyUser(user);
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'signInWithGithub',
+            arguments: <String, String>{
+              'token': kMockGithubToken,
+              'app': auth.app.name,
+            },
+          ),
+        ],
+      );
     });
 
     test('linkWithEmailAndPassword', () async {
@@ -235,6 +314,101 @@ void main() {
           'app': auth.app.name,
         })
       ]);
+    });
+
+    test('reauthenticateWithEmailAndPassword', () async {
+      await auth.reauthenticateWithEmailAndPassword(
+        email: kMockEmail,
+        password: kMockPassword,
+      );
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'reauthenticateWithEmailAndPassword',
+            arguments: <String, String>{
+              'email': kMockEmail,
+              'password': kMockPassword,
+              'app': auth.app.name,
+            },
+          ),
+        ],
+      );
+    });
+    test('reauthenticateWithGoogleCredential', () async {
+      await auth.reauthenticateWithGoogleCredential(
+        idToken: kMockIdToken,
+        accessToken: kMockAccessToken,
+      );
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'reauthenticateWithGoogleCredential',
+            arguments: <String, String>{
+              'idToken': kMockIdToken,
+              'accessToken': kMockAccessToken,
+              'app': auth.app.name,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('reauthenticateWithFacebookCredential', () async {
+      await auth.reauthenticateWithFacebookCredential(
+        accessToken: kMockAccessToken,
+      );
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'reauthenticateWithFacebookCredential',
+            arguments: <String, String>{
+              'accessToken': kMockAccessToken,
+              'app': auth.app.name,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('reauthenticateWithTwitterCredential', () async {
+      await auth.reauthenticateWithTwitterCredential(
+        authToken: kMockAuthToken,
+        authTokenSecret: kMockAuthTokenSecret,
+      );
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'reauthenticateWithTwitterCredential',
+            arguments: <String, String>{
+              'authToken': kMockAuthToken,
+              'authTokenSecret': kMockAuthTokenSecret,
+              'app': auth.app.name,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('reauthenticateWithGithubCredential', () async {
+      await auth.reauthenticateWithGithubCredential(
+        token: kMockGithubToken,
+      );
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'reauthenticateWithGithubCredential',
+            arguments: <String, String>{
+              'app': auth.app.name,
+              'token': kMockGithubToken,
+            },
+          ),
+        ],
+      );
     });
 
     test('linkWithGoogleCredential', () async {
@@ -311,6 +485,86 @@ void main() {
             arguments: <String, String>{
               'accessToken': kMockAccessToken,
               'app': auth.app.name,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('linkWithTwitterCredential', () async {
+      final FirebaseUser user = await auth.linkWithTwitterCredential(
+        authToken: kMockAuthToken,
+        authTokenSecret: kMockAuthTokenSecret,
+      );
+      verifyUser(user);
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'linkWithTwitterCredential',
+            arguments: <String, String>{
+              'app': auth.app.name,
+              'authToken': kMockAuthToken,
+              'authTokenSecret': kMockAuthTokenSecret,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('signInWithTwitter', () async {
+      final FirebaseUser user = await auth.signInWithTwitter(
+        authToken: kMockAuthToken,
+        authTokenSecret: kMockAuthTokenSecret,
+      );
+      verifyUser(user);
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'signInWithTwitter',
+            arguments: <String, String>{
+              'app': auth.app.name,
+              'authToken': kMockAuthToken,
+              'authTokenSecret': kMockAuthTokenSecret,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('linkWithGithubCredential', () async {
+      final FirebaseUser user = await auth.linkWithGithubCredential(
+        token: kMockGithubToken,
+      );
+      verifyUser(user);
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'linkWithGithubCredential',
+            arguments: <String, String>{
+              'app': auth.app.name,
+              'token': kMockGithubToken,
+            },
+          ),
+        ],
+      );
+    });
+
+    test('signInWithGithub', () async {
+      final FirebaseUser user = await auth.signInWithGithub(
+        token: kMockGithubToken,
+      );
+      verifyUser(user);
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall(
+            'signInWithGithub',
+            arguments: <String, String>{
+              'app': auth.app.name,
+              'token': kMockGithubToken,
             },
           ),
         ],
@@ -467,6 +721,96 @@ void main() {
             'photoUrl': kMockPhotoUrl,
             'displayName': kMockDisplayName,
             'app': auth.app.name,
+          },
+        ),
+      ]);
+    });
+
+    test('unlinkEmailAndPassword', () async {
+      final FirebaseUser user = await auth.currentUser();
+      await user.unlinkEmailAndPassword();
+      expect(log, <Matcher>[
+        isMethodCall(
+          'currentUser',
+          arguments: <String, String>{'app': auth.app.name},
+        ),
+        isMethodCall(
+          'unlinkCredential',
+          arguments: <String, String>{
+            'app': auth.app.name,
+            'provider': 'password',
+          },
+        ),
+      ]);
+    });
+
+    test('unlinkGoogleCredential', () async {
+      final FirebaseUser user = await auth.currentUser();
+      await user.unlinkGoogleCredential();
+      expect(log, <Matcher>[
+        isMethodCall(
+          'currentUser',
+          arguments: <String, String>{'app': auth.app.name},
+        ),
+        isMethodCall(
+          'unlinkCredential',
+          arguments: <String, String>{
+            'app': auth.app.name,
+            'provider': 'google.com',
+          },
+        ),
+      ]);
+    });
+
+    test('unlinkFacebookCredential', () async {
+      final FirebaseUser user = await auth.currentUser();
+      await user.unlinkFacebookCredential();
+      expect(log, <Matcher>[
+        isMethodCall(
+          'currentUser',
+          arguments: <String, String>{'app': auth.app.name},
+        ),
+        isMethodCall(
+          'unlinkCredential',
+          arguments: <String, String>{
+            'app': auth.app.name,
+            'provider': 'facebook.com',
+          },
+        ),
+      ]);
+    });
+
+    test('unlinkTwitterCredential', () async {
+      final FirebaseUser user = await auth.currentUser();
+      await user.unlinkTwitterCredential();
+      expect(log, <Matcher>[
+        isMethodCall(
+          'currentUser',
+          arguments: <String, String>{'app': auth.app.name},
+        ),
+        isMethodCall(
+          'unlinkCredential',
+          arguments: <String, String>{
+            'app': auth.app.name,
+            'provider': 'twitter.com',
+          },
+        ),
+      ]);
+    });
+
+    test('unlinkGithubCredential', () async {
+      final FirebaseUser user = await auth.currentUser();
+      await user.unlinkGithubCredential();
+      expect(log, <Matcher>[
+        isMethodCall(
+          'currentUser',
+          arguments: <String, String>{'app': auth.app.name},
+        ),
+        isMethodCall(
+          'unlinkCredential',
+          arguments: <String, String>{
+            'app': auth.app.name,
+            'provider': 'github.com',
           },
         ),
       ]);

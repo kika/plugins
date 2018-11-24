@@ -128,7 +128,7 @@ public class FirebaseAuthPlugin implements MethodCallHandler {
         handleGetToken(call, result, getAuth(call));
         break;
       case "linkWithPhoneNumber":
-        handleLinkWithPhoneNumber(call, result);
+        handleLinkWithPhoneNumber(call, result, getAuth(call));
       case "reauthenticateWithEmailAndPassword":
         handleReauthenticateWithEmailAndPassword(call, result, getAuth(call));
         break;
@@ -301,7 +301,8 @@ public class FirebaseAuthPlugin implements MethodCallHandler {
     return exceptionMap;
   }
 
-  private void handleLinkWithPhoneNumber(MethodCall call, Result result) {
+  private void handleLinkWithPhoneNumber(
+        MethodCall call, Result result, FirebaseAuth firebaseAuth) {
     Map<String, String> arguments = (Map<String, String>) call.arguments;
     String verificationId = arguments.get("verificationId");
     String smsCode = arguments.get("smsCode");

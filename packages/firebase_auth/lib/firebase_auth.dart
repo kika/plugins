@@ -737,9 +737,10 @@ class FirebaseAuth {
       <String, String>{
         'verificationId': verificationId,
         'smsCode': smsCode,
+        'app': app.name,
       },
     );
-    final FirebaseUser currentUser = FirebaseUser._(data);
+    final FirebaseUser currentUser = FirebaseUser._(data, app);
     return currentUser;
   }
 
